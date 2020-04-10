@@ -53,13 +53,15 @@ public class POC {
         try {
             Cipher chiffreur = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             chiffreur.init(Cipher.ENCRYPT_MODE,publicKey_rsa);
-            chiffre = chiffreur.doFinal(k_aes.getEncoded());
+            //chiffre = chiffreur.doFinal(k_aes.getEncoded());
 
             FileOutputStream outputStream = new FileOutputStream("resultat.txt");
-            System.out.println("message encrypté : 0x" + chiffre.length + Arrays.toString(chiffre));
+            //System.out.println("message encrypté : 0x" + chiffre.length + Arrays.toString(chiffre));
             CipherOutputStream cos = new CipherOutputStream(outputStream,chiffreur);
-            for (byte b : chiffre) cos.write(b);
-            //cos.write(chiffre);
+            cos.write(k_aes.getEncoded());
+            cos.write(iv.getIV());
+            cos.close();
+
             /*final PrintWriter pw = new PrintWriter(cos);
             pw.flush();
             cos.write(iv.getIV());
