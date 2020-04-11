@@ -9,10 +9,7 @@ public class Aes {
             (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
     } ;
 
-    byte[] iv = {
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
-    } ;
+
 
     /* Résultat du TP précédent : diversification de la clef courte K en une clef étendue W */
 
@@ -52,6 +49,30 @@ public class Aes {
             (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
             (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
     };
+
+   //SubBytes
+    /*public byte[] State = {
+            (byte)0x00, (byte)0x01, (byte)0x02, (byte)0x03, (byte)0x00, (byte)0x01, (byte)0x02, (byte)0x03,
+            (byte)0x00, (byte)0x01, (byte)0x02, (byte)0x03, (byte)0x00, (byte)0x01, (byte)0x02, (byte)0x03
+    };*/
+
+    //ShiftRows
+    /*public byte[] State = {
+            (byte)0xa0, (byte)0xb0, (byte)0xc0, (byte)0xd0, (byte)0xa1, (byte)0xb1, (byte)0xc1, (byte)0xd1,
+            (byte)0xa2, (byte)0xb2, (byte)0xc2, (byte)0xd2, (byte)0xa3, (byte)0xb3, (byte)0xc3, (byte)0xd3
+    };*/
+
+    //MixColumns
+   /* public byte[] State = {
+            (byte)0x0E, (byte)0x09, (byte)0x0D, (byte)0x0B, (byte)0x0B, (byte)0x0E, (byte)0x09, (byte)0x0D,
+            (byte)0x0D, (byte)0x0B, (byte)0x0E, (byte)0x09, (byte)0x09, (byte)0x0D, (byte)0x0B, (byte)0x0E
+    };*/
+
+   //AddRoundKey
+   /* public byte[] State = {
+            (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF,
+            (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF
+    };*/
 
 
    public Aes(byte[] state){
@@ -136,10 +157,7 @@ public class Aes {
 
 
     public void setState(byte[] tmp , int start){
-
-        for(int i = start; i<16+start; i++){
-           State[i%16]=tmp[i];
-        }
+        System.arraycopy(tmp, start, State, 0, 16);
     }
 
 
@@ -206,13 +224,13 @@ public class Aes {
     }
 
     public void AddRoundKey(int r){
-        System.out.println(" w :");
-       // afficher_le_bloc(W);
+
         for (int i = 0; i < 16; i++)
             State[i] = (byte) (State[i] ^ W[r+i]);
     }
 
 }
+
 
 /*
   $ make
