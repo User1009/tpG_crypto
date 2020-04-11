@@ -3,7 +3,7 @@ import java.util.Random;
 
 public class Pkcs5AES {
 
-    Aes aes;
+    Aes aes=new Aes();
     int k=16;                                   //Taille des blocs AES, nb d'octets max a rajouter pour le bourrage
 
     byte[] iv = {
@@ -58,7 +58,7 @@ public class Pkcs5AES {
         return null;
     }
 
-    private void aes_cbc(String name){
+    public byte[] aes_cbc(String name){
 
         File f = new File(name);
         byte[] paddedFile = pkcs5(name);
@@ -98,12 +98,12 @@ public class Pkcs5AES {
             fos.write(cryptedFile);
             fos.flush();
             fos.close();
-
-
+            return cryptedFile;
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public void setRandomIv(){
@@ -112,7 +112,11 @@ public class Pkcs5AES {
 
     }
 
+    public void setRandomKey(){
+        Random r = new Random();
+        r.nextBytes(aes.K);
 
+    }
 
     public static void main(String[] args) throws IOException {
        /* try {

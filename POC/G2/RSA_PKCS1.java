@@ -3,6 +3,95 @@ import java.util.Random;
 
 public class RSA_PKCS1 {
 
+    BigInteger n;
+    BigInteger e ;
+    BigInteger d ;
+    byte[] em = new byte[128];
+    String ihash = "da39a3ee5e6b4b0d3255bfef95601890afd80709"; // sha1sum de ""
+    BigInteger x;
+    BigInteger cryptedInteger;
+
+
+    public void createKeys(BigInteger n, BigInteger e){
+
+        System.out.println("Module          (n): " + n + " ("+n.bitLength()+" bits)");
+        System.out.println("Exposant public (e): " + e + " ("+e.bitLength()+" bits)");
+        this.n=n;
+        this.e=e;
+
+
+    }
+
+    public void createEmTab(byte[] m){
+
+        em[0]=0x00;
+        em[1]=0x02;
+
+        Random r = new Random();
+        for(int i=2; i<em.length-m.length;i++){
+            int tmp=r.nextInt(255);
+            em[i]= (byte) (tmp+1);
+            System.out.print(String.format("%02x",em[i])+" ");
+        }
+
+        for(int i= 0;i<5;i++){
+            em[i+ em.length - m.length]= m[i];
+        }
+
+    }
+
+
+    void createRepresentativeInteger(){
+        //------------------------------------------------------------------
+        //  Du message m à l'entier représentatif x (partie à modifier)
+        //------------------------------------------------------------------
+        x = new BigInteger(1, em);          // Encodage du message
+        System.out.println("x = " +  x  + " (en décimal)");
+        // Affichage de x en décimal
+        System.out.println("x = 0x" + String.format("%X", x) + " (en hexadécimal)");
+        // Affichage de x en hexadécimal
+
+    }
+
+    void cryptMessage(BigInteger msg){
+
+        msg = new BigInteger(1, em);          // Encodage du message
+        System.out.println("x = " +  x  + " (en décimal)");
+        // Affichage de x en décimal
+        System.out.println("x = 0x" + String.format("%X", x) + " (en hexadécimal)");
+        // Affichage de x en hexadécimal
+        //------------------------------------------------------------------
+        //  Chiffrement de l'entier représentatif
+        //------------------------------------------------------------------
+        cryptedInteger = msg.modPow(e, n);
+        System.out.println("x^e mod n = " + cryptedInteger + " ("+ cryptedInteger.bitLength()+" bits)");
+
+    }
+
+    void decryptMessage(BigInteger c){
+
+        byte[] chiffre = c.toByteArray();
+        if (chiffre[0] == 0) {
+            byte[] tmp = new byte[chiffre.length - 1];
+            System.arraycopy(chiffre, 1, tmp, 0, tmp.length);
+            chiffre = tmp;
+        }
+
+        System.out.println("Taille du chiffré :"+chiffre.length);
+        System.out.println("Message chiffré    : " + toHex(chiffre) );
+        BigInteger code = new BigInteger(chiffre);
+        BigInteger codeDéchiffré = code.modPow(d, n);
+        byte[] tmp = codeDéchiffré.toByteArray();
+        byte[] md=new byte[5];
+        for(int i=0;i<5;i++){
+
+            md[i]=tmp[i+ tmp.length - md.length];
+            System.out.print(String.format("%02x",md[i])+" ");
+
+        }
+    }
+
+
     public static void main(String[] args) throws Exception {
         //------------------------------------------------------------------
         //  Construction et affichage de la clef
@@ -43,7 +132,7 @@ public class RSA_PKCS1 {
         //  Construction du tableau em
         //------------------------------------------------------------------
 
-        byte[] em = new byte[128];
+        /*byte[] em = new byte[128];
         em[0]=0x00;
         em[1]=0x02;
 
@@ -63,14 +152,11 @@ public class RSA_PKCS1 {
             em[i+ em.length - m.length]= m[i];
         }
 
-
-
-
-        String ihash = "da39a3ee5e6b4b0d3255bfef95601890afd80709"; // sha1sum de ""
+*/
         //------------------------------------------------------------------
         //  Du message m à l'entier représentatif x (partie à modifier)
         //------------------------------------------------------------------
-        BigInteger x = new BigInteger(1, em);          // Encodage du message
+       /* BigInteger x = new BigInteger(1, em);          // Encodage du message
         System.out.println("x = " +  x  + " (en décimal)");
         // Affichage de x en décimal
         System.out.println("x = 0x" + String.format("%X", x) + " (en hexadécimal)");
@@ -79,12 +165,12 @@ public class RSA_PKCS1 {
         //  Chiffrement de l'entier représentatif
         //------------------------------------------------------------------
         BigInteger c = x.modPow(e, n);
-        System.out.println("x^e mod n = " + c + " ("+c.bitLength()+" bits)");
+        System.out.println("x^e mod n = " + c + " ("+c.bitLength()+" bits)");*/
 
         //------------------------------------------------------------------
         //  Décodage de l'entier représentatif
         //------------------------------------------------------------------
-        byte[] chiffré = c.toByteArray();
+       /* byte[] chiffré = c.toByteArray();
         if (chiffré[0] == 0) {
             byte[] tmp = new byte[chiffré.length - 1];
             System.arraycopy(chiffré, 1, tmp, 0, tmp.length);
@@ -102,7 +188,7 @@ public class RSA_PKCS1 {
             md[i]=tmp[i+ tmp.length - md.length];
             System.out.print(String.format("%02x",md[i])+" ");
 
-        }
+        }*/
 
     }
     
