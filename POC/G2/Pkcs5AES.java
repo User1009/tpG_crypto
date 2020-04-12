@@ -60,7 +60,6 @@ public class Pkcs5AES {
 
     public byte[] aes_cbc(String name){
 
-        File f = new File(name);
         byte[] paddedFile = pkcs5(name);
         byte[] cryptedFile = new byte[paddedFile.length];
         aes= new Aes();
@@ -89,11 +88,8 @@ public class Pkcs5AES {
             aes.chiffrer();
             System.arraycopy(aes.State, 0, cryptedFile, i, 16);
         }
-
         try {
-
             FileOutputStream fos=new FileOutputStream("POC/G2/cbc-secret.jpg");
-
             fos.write(iv);
             fos.write(cryptedFile);
             fos.flush();

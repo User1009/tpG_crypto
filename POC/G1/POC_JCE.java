@@ -17,6 +17,13 @@ public class POC_JCE {
     private PublicKey publicKey_rsa;
 
 
+    public static String toHex(byte[] données) {
+        StringBuffer sb = new StringBuffer();
+        for(byte k: données) sb.append(String.format("0x%02X ", k));
+        sb.append(" (").append(données.length).append(" octets)");
+        return sb.toString();
+    }
+
     private void gen_aes_key () {
         KeyGenerator keyGen;
 
@@ -24,6 +31,7 @@ public class POC_JCE {
             keyGen = KeyGenerator.getInstance("AES");
             keyGen.init(128);
             k_aes = keyGen.generateKey();
+            System.out.println(toHex(k_aes.getEncoded()));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -47,47 +55,43 @@ public class POC_JCE {
         }
     }
 
-    private void rsa_encrypt(){
+    private void rsaCrypt(){
+
         try {
+            FileOutputStream fos = new FileOutputStream("POC/G1/resultat.txt");
             Cipher chiffreur = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             chiffreur.init(Cipher.ENCRYPT_MODE,publicKey_rsa);
 
-            FileOutputStream outputStream = new FileOutputStream("POC/G1/resultat.txt");
-            CipherOutputStream cos = new CipherOutputStream(outputStream,chiffreur);
+            CipherOutputStream cos = new CipherOutputStream(fos,chiffreur);
 
             cos.write(k_aes.getEncoded());
-            cos.write(iv.getIV());
-            cos.close();
+            System.out.println(toHex(iv.getIV()));
 
-        } catch (Exception e1) {
-            e1.printStackTrace();
+            fos.write(iv.getIV());
+            cos.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
+
     private void chiffrer(String path){
 
-        File f = new File(path);
         try {
-            FileInputStream fis= new FileInputStream(f);
-            FileOutputStream fos = new FileOutputStream("POC/G1/resultat.txt");
-
+            FileInputStream fis= new FileInputStream(path);
             Key aesKey = new SecretKeySpec(k_aes.getEncoded(),"AES");
+            FileOutputStream fos2=new FileOutputStream("POC/G1/resultat.txt",true);
 
             Cipher chiffreur = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            chiffreur.init(Cipher.ENCRYPT_MODE, aesKey);
+            chiffreur.init(Cipher.ENCRYPT_MODE, aesKey,iv);
 
-            CipherOutputStream cos = new CipherOutputStream(fos, chiffreur);
-            int read;
-            byte[] buf = new byte[1024];
-            while((read = fis.read(buf)) != -1) {
-                cos.write(buf, 0, read);
-            }
-            cos.close();
+            CipherOutputStream cos_2 = new CipherOutputStream(fos2, chiffreur);
+            cos_2.write(fis.readAllBytes());
+            cos_2.close();
 
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
-
     }
 
     public static void main(String[] args) {
@@ -95,7 +99,7 @@ public class POC_JCE {
         poc.gen_aes_key();
         poc.gen_iv();
         poc.gen_rsa_key();
-        poc.rsa_encrypt();
+        poc.rsaCrypt();
         poc.chiffrer("butokuden.jpg");
     }
 

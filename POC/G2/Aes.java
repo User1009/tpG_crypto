@@ -229,6 +229,14 @@ public class Aes {
             State[i] = (byte) (State[i] ^ W[r+i]);
     }
 
+    public byte[] getRond(int r){
+        byte[] tmp=new byte[16];
+        for(int i=0;i<16;i++){
+            tmp[i]=W[r+i];
+        }
+        return tmp;
+    }
+
 }
 
 

@@ -9,7 +9,7 @@ public class RSA_PKCS1 {
     byte[] em = new byte[128];
     String ihash = "da39a3ee5e6b4b0d3255bfef95601890afd80709"; // sha1sum de ""
     BigInteger x;
-    BigInteger cryptedInteger;
+    BigInteger cryptedInteger=new BigInteger("0");
 
 
     public void createKeys(BigInteger n, BigInteger e){
@@ -19,14 +19,12 @@ public class RSA_PKCS1 {
         this.n=n;
         this.e=e;
 
-
     }
 
     public void createEmTab(byte[] m){
 
         em[0]=0x00;
         em[1]=0x02;
-
         Random r = new Random();
         for(int i=2; i<em.length-m.length;i++){
             int tmp=r.nextInt(255);
@@ -34,31 +32,19 @@ public class RSA_PKCS1 {
             System.out.print(String.format("%02x",em[i])+" ");
         }
 
-        for(int i= 0;i<5;i++){
+        for(int i= 0;i<16;i++){
             em[i+ em.length - m.length]= m[i];
         }
 
     }
 
+    void cryptMessage(byte[] byteMsg){
 
-    void createRepresentativeInteger(){
-        //------------------------------------------------------------------
-        //  Du message m à l'entier représentatif x (partie à modifier)
-        //------------------------------------------------------------------
-        x = new BigInteger(1, em);          // Encodage du message
+        createEmTab(byteMsg);
+        BigInteger msg = new BigInteger(1, em);          // Encodage du message
         System.out.println("x = " +  x  + " (en décimal)");
         // Affichage de x en décimal
-        System.out.println("x = 0x" + String.format("%X", x) + " (en hexadécimal)");
-        // Affichage de x en hexadécimal
-
-    }
-
-    void cryptMessage(BigInteger msg){
-
-        msg = new BigInteger(1, em);          // Encodage du message
-        System.out.println("x = " +  x  + " (en décimal)");
-        // Affichage de x en décimal
-        System.out.println("x = 0x" + String.format("%X", x) + " (en hexadécimal)");
+        //System.out.println("x = 0x" + String.format("%X", x) + " (en hexadécimal)");
         // Affichage de x en hexadécimal
         //------------------------------------------------------------------
         //  Chiffrement de l'entier représentatif
